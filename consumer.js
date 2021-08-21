@@ -16,13 +16,13 @@ function createConfigMap(config) {
       'security.protocol': config['security.protocol'],
       'sasl.mechanisms': config['sasl.mechanisms'],
       // replace the final letter after each request
-      'group.id': 'connect-PPW-172900-g'
+      'group.id': 'connect-PPW-172900--from-beginning-12'
     }
   } else {
     return {
       'bootstrap.servers': config['bootstrap.servers'],
       // replace the final letter after each request
-      'group.id': 'connect-PPW-172900-g'
+      'group.id': 'connect-PPW-172900--from-beginning-12'
     }
   }
 }
@@ -96,12 +96,21 @@ async function consumerExample() {
   // govhack-wa_contact_tracing_flights        
   // govhack-wa_contact_tracing_locations       
   // govhack-wa_stats_by_date
-  let topic = "govhack-casesbydateandstate";
+  let topic = "govhack-nsw_tests_postcode_lga_lhd";
 
+  let txt = "";
+  let count = 1;
   const consumer = await createConsumer(config, ({key, value}) => {
     let k = key.toString().padEnd(10, ' ');
-    // the following line is to print result, mainly in value
-    console.log(`Consumed event from topic ${topic}: key = ${k} value = ${value}`);
+    // the following line is to print result
+    // console.log(`Consumed event from topic ${topic}: key = ${k} value = ${value}`);
+    const fs = require('fs');
+    txt += `${value}`;
+    txt += "\n"
+    fs.writeFile('info.txt', txt, 'utf8', ()=>{
+      count++;
+      console.log(`Done ${count}`);
+    });
   });
 
   consumer.subscribe([topic]);
